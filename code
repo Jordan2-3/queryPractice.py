@@ -1,0 +1,113 @@
+"""
+Created on Tue Aug  8 09:56:13 2023
+
+@author: jordannobles
+"""
+
+import sqlite3 #SQLite is a lightweight database that comes built-in with Python, making it easy to work with for learning purposes
+
+# Connect to the database or create one if it doesn't exist
+conn = sqlite3.connect('practice_database.db')
+
+# Create a cursor object to interact with the database
+cursor = conn.cursor()
+
+# Create a table (if it doesn't exist) to store information about books
+cursor.execute('''CREATE TABLE IF NOT EXISTS books (
+                    id INTEGER PRIMARY KEY,
+                    title TEXT NOT NULL,
+                    author TEXT NOT NULL,
+                    year INTEGER NOT NULL
+                 )''')
+
+# Save changes and close the connection
+conn.commit()
+conn.close()
+
+# Insert data into the table:
+def insert_book(title, author, year):
+    conn = sqlite3.connect('practice_database.db')
+    cursor = conn.cursor()
+
+    # Insert book information into the 'books' table
+    cursor.execute('INSERT INTO books (title, author, year) VALUES (?, ?, ?)', (title, author, year))
+
+    conn.commit()
+    conn.close()
+
+# Example: Inserting a book into the database
+insert_book('Sample Book', 'John Doe', 2022)
+insert_book('Invincible', 'Robert Kirkman', 2022)
+
+#Query the database to retrieve data:
+def get_books_by_author(author):
+    conn = sqlite3.connect('practice_database.db')
+    cursor = conn.cursor()
+
+    # Query the 'books' table to get books by a specific author
+    cursor.execute('SELECT * FROM books WHERE author = ?', (author,))
+    books = cursor.fetchall()
+
+    conn.close()
+    return books
+
+def get_books_by_title(title):
+    conn = sqlite3.connect('practice_database.db')
+    cursor = conn.cursor()
+
+    # Query the 'books' table to get books by a specific title
+    cursor.execute('SELECT * FROM books WHERE title = ?', (title,))
+    books = cursor.fetchall()
+
+    conn.close()
+    return books
+
+# Example: Retrieving books written by 'John Doe' & with a title of invincible
+john_doe_books = get_books_by_author('John Doe') # case counts
+Robert_Kirkman_books = get_books_by_title('Invincible')
+print(john_doe_books )
+print(Robert_Kirkman_books)
+
+# Update data in the database:
+def update_book_title(book_id, new_title):
+    conn = sqlite3.connect('practice_database.db')
+    cursor = conn.cursor()
+
+    # Update the title of the book with the given 'book_id'
+    cursor.execute('UPDATE books SET title = ? WHERE id = ?', (new_title, book_id))
+
+    conn.commit()
+    conn.close()
+
+# Example: Updating the title of a book with 'id' 1
+update_book_title(1, 'New Sample Book Title')
+update_book_title(2, 'Atom Eve Special')
+
+#Delete data from the database:
+def delete_book(book_id):
+
+    conn = sqlite3.connect('practice_database.db')
+    cursor = conn.cursor()
+    
+    # Delete the book with the given 'book_id'
+    cursor.execute('DELETE FROM books WHERE id = ?', (book_id,))
+    
+    conn.commit()
+    conn.close()
+    
+    # Example: Deleting a book with 'id' 1
+delete_book(1)
+
+def delete_book(book_author): 
+    
+    conn = sqlite3.connect('practice_database.db')
+    cursor = conn.cursor()
+   
+    # Delete the book with the given 'book_author'
+    cursor.execute('DELETE FROM books WHERE author = ?', (book_author,))
+    
+    conn.commit()
+    conn.close()
+
+
+delete_book('John Doe')
